@@ -1,6 +1,6 @@
 close all
 % for i=1:1
-%   W0=.007;
+%   W0=0;
 %     C0=2.017;
 %     E0=31.217
 %     [x,y,u,dx]=trim('jellystone_v5')
@@ -11,9 +11,9 @@ figure
 hold on
 for i=1:25
     G0=.8+(rand-.5)*.16;
-    W0=0;
+    W0=i/1000;
     C0=2.017+(rand-.5)*.404;
-    E0=31.217+(rand-.5)*6.244;
+    E0=31.217+(rand-.5)*.626;
     plot([C0],[E0],'.r')
     xlabel('coyotes')
     ylabel('elk')
@@ -22,9 +22,9 @@ for i=1:25
     E=x(:,1);
     C=x(:,2);
     plot(C,E);
-    if(E(end)<E0)
+     if(E(end)<E0)
         disp(['Initial Wolf Count =',num2str(W0*1000), 'elk count=',num2str(E(end)*1000), 'coyote count=', num2str(C(end)*1000)]);
-    end
+     end
 end
 % figure;
 % plot(t,F);
