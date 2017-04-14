@@ -3,13 +3,13 @@ close all
 %   W0=0;
 %     C0=2.017;
 %     E0=31.217
-%     [x,y,u,dx]=trim('jellystone_v5')
+%     [x,y,u,dx]=trim('jellystone_v6')
 %     disp(['Trial ', num2str(i), ':Equilibrium is ', num2str(x(1)), ' and ', num2str(x(2))]);
 %     disp(['...']);
 % end
 figure
 hold on
-set_param('jellystone_v5', 'StopTime', '30')
+set_param('jellystone_v6', 'StopTime', '30')
 
 initialWolfCount = 0;
 
@@ -26,7 +26,7 @@ for i=1:25
     xlabel('coyotes')
     ylabel('elk')
     title('coyotes vs. elk (no wolves)')
-    [t,x,y]=sim('jellystone_v5');
+    [t,x,y]=sim('jellystone_v6');
     E=x(:,1);
     C=x(:,2);
     W=x(:,3);
@@ -47,11 +47,12 @@ for i=1:25
     xlabel('coyotes')
     ylabel('elk')
     title('coyotes vs. elk (with wolves)')
-    [t,x,y]=sim('jellystone_v5');
+    [t,x,y]=sim('jellystone_v6');
     E=x(:,1);
     C=x(:,2);
     W=x(:,3);
     plot(C*1000,E*1000);
+    disp(['Coyote percentage:',num2str(C(end)/C0),'Elk percentage:',num2str(E(end)/E0)]);
     if(E(end)<E0)
         initialWolfCount = W0;
         disp(['Initial Wolf Count =',num2str(W0*1000), 'elk count=',num2str(E(end)*1000), 'coyote count=', num2str(C(end)*1000)]);
@@ -95,7 +96,7 @@ for i=1:25
     xlabel('coyotes')
     ylabel('elk')
     title(['coyotes vs. elk with initial wolf count of ', num2str(initialWolfCount*1000)])
-    [t,x,y]=sim('jellystone_v5');
+    [t,x,y]=sim('jellystone_v6');
     E=x(:,1);
     C=x(:,2);
     W=x(:,3);
@@ -111,8 +112,8 @@ for i=1:1
     C0=2.017;
     E0=31.217;
 
-    set_param('jellystone_v5', 'StopTime', '100')
-    [t,x,y]=sim('jellystone_v5');   
+    set_param('jellystone_v6', 'StopTime', '100')
+    [t,x,y]=sim('jellystone_v6');   
         E=x(:,1);
     C=x(:,2);
     W=x(:,3);
@@ -148,8 +149,8 @@ for i=1:1
     W0=initialWolfCount;
     C0=2.017;
     E0=31.217;
-    set_param('jellystone_v5', 'StopTime', '1000')
-    [t,x,y]=sim('jellystone_v5');   
+    set_param('jellystone_v6', 'StopTime', '1000')
+    [t,x,y]=sim('jellystone_v6');   
     E=x(:,1);
     C=x(:,2);
     W=x(:,3);
@@ -188,7 +189,7 @@ for i=1:25
     xlabel('time')
     ylabel('coyotes')
     title('coyotes vs. time (no wolves) over a millenium')
-    [t,x,y]=sim('jellystone_v5');
+    [t,x,y]=sim('jellystone_v6');
     C=x(:,2);
     plot(t,C*1000);
 end
