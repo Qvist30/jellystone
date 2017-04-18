@@ -1,4 +1,5 @@
 close all
+
 % for i=1:1
 %   W0=0;
 %     C0=2.017;
@@ -180,7 +181,7 @@ xlabel('time');
 
 figure;
 hold on;
-% Shows whether or not coyotes go extinct if we don't introduce any wolves.
+%Shows whether or not coyotes go extinct if we don't introduce any wolves.
 for i=1:25
     G0=.8+(rand-.5)*.16;
     W0=0;
@@ -191,5 +192,6 @@ for i=1:25
     title('coyotes vs. time (no wolves) over a millenium')
     [t,x,y]=sim('jellystone_v6');
     C=x(:,2);
+    %E=x(:,1);
     plot(t,C*1000);
 end
