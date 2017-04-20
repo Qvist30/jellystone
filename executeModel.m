@@ -1,13 +1,7 @@
 close all
+acreage=19.68; % *1000
+graze = .492;
 
-% for i=1:1
-%   W0=0;
-%     C0=2.017;
-%     E0=31.217
-%     [x,y,u,dx]=trim('jellystone_v6')
-%     disp(['Trial ', num2str(i), ':Equilibrium is ', num2str(x(1)), ' and ', num2str(x(2))]);
-%     disp(['...']);
-% end
 figure
 hold on
 set_param('jellystone_v6', 'StopTime', '30')
@@ -104,8 +98,6 @@ for i=1:25
     plot(C*1000,E*1000);
 end
 
-% figure
-% hold on
 %Executes the model over 100 years.
 for i=1:1
     G0=.8;
@@ -155,6 +147,12 @@ for i=1:1
     E=x(:,1);
     C=x(:,2);
     W=x(:,3);
+    for j=1:size(C)
+        if(C(j) < .001)
+            disp(['After adding wolves, coytoes go extinct in year ', num2str(2016+j)]);
+            break;
+        end
+    end
 end
 figure
 plot(W*1000,E*1000);
@@ -181,6 +179,7 @@ xlabel('time');
 
 figure;
 hold on;
+
 %Shows whether or not coyotes go extinct if we don't introduce any wolves.
 for i=1:25
     G0=.8+(rand-.5)*.16;
@@ -192,6 +191,30 @@ for i=1:25
     title('coyotes vs. time (no wolves) over a millenium')
     [t,x,y]=sim('jellystone_v6');
     C=x(:,2);
-    %E=x(:,1);
     plot(t,C*1000);
+    for j=1:size(C)
+        if(C(j) < .001)
+            averageExtinctionYear(i) = j+2016;
+            break;
+        end
+    end
+end
+disp(['Without wolves, coyotes will go extinct around the year ', num2str(mean(averageExtinctionYear))]);
+%Do we buy anything by introducing less wolves?
+for i=1:1
+    G0=.8;
+    W0=.001;
+    C0=2.017;
+    E0=31.217;
+    set_param('jellystone_v6', 'StopTime', '1000')
+    [t,x,y]=sim('jellystone_v6');   
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    for j=1:size(C)
+        if(C(j) < .001)
+            disp(['After adding only 1 wolf, coytoes go extinct in year ', num2str(2016+j)]);
+            break;
+        end
+    end
 end
