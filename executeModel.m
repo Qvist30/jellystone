@@ -1,3 +1,7 @@
+% executeModel.m
+% Written by Tom Kennedy and Matthew Ellis
+% Executes the Jellystone_v6 model.
+
 close all
 acreage=19.68; % *1000
 graze = .492;
