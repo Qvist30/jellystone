@@ -1,0 +1,538 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>executeModel</title><meta name="generator" content="MATLAB 9.1"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2017-04-21"><meta name="DC.source" content="executeModel.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><pre class="codeinput"><span class="comment">% executeModel.m</span>
+<span class="comment">% Written by Tom Kennedy and Matthew Ellis</span>
+<span class="comment">% Executes the Jellystone_v6 model.</span>
+
+close <span class="string">all</span>
+acreage=19.68; <span class="comment">% *1000</span>
+graze = .492;
+
+figure
+hold <span class="string">on</span>
+set_param(<span class="string">'jellystone_v6'</span>, <span class="string">'StopTime'</span>, <span class="string">'30'</span>)
+
+initialWolfCount = 0;
+
+<span class="comment">%Shows Executes the simulation over 30 years without wolves, shows that</span>
+<span class="comment">%the elk population is continuing to approach 40,000.  Uses random numbers</span>
+<span class="comment">% for G0 (grazing ground, which should be able to go from .72 to .88, for</span>
+<span class="comment">%C0 it can be 1,815 to 2,219, for E0 it can go from 25,873 to 37,461.</span>
+<span class="keyword">for</span> i=1:25
+    G0=.8+(rand-.5)*.16;
+    W0=0;
+    C0=2.017+(rand-.5)*.404;
+    E0=31.217+(rand-.5)*6.244;
+    plot([C0]*1000,[E0]*1000,<span class="string">'.r'</span>)
+    xlabel(<span class="string">'coyotes'</span>)
+    ylabel(<span class="string">'elk'</span>)
+    title(<span class="string">'coyotes vs. elk (no wolves)'</span>)
+    [t,x,y]=sim(<span class="string">'jellystone_v6'</span>);
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    plot(C*1000,E*1000);
+<span class="keyword">end</span>
+
+figure
+hold <span class="string">on</span>
+<span class="comment">%Determines what the number of wolves would be that we would need to</span>
+<span class="comment">%introduce into the model for the elk population to decrease over 30 years.</span>
+
+<span class="keyword">for</span> i=1:25
+    G0=.8;
+    W0=i/1000;
+    C0=2.017;
+    E0=31.217;
+    plot([C0]*1000,[E0]*1000,<span class="string">'.r'</span>)
+    xlabel(<span class="string">'coyotes'</span>)
+    ylabel(<span class="string">'elk'</span>)
+    title(<span class="string">'coyotes vs. elk (with wolves)'</span>)
+    [t,x,y]=sim(<span class="string">'jellystone_v6'</span>);
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    plot(C*1000,E*1000);
+    disp([<span class="string">'Coyote percentage:'</span>,num2str(C(end)/C0),<span class="string">'Elk percentage:'</span>,num2str(E(end)/E0)]);
+    <span class="keyword">if</span>(E(end)&lt;E0)
+        initialWolfCount = W0;
+        disp([<span class="string">'Initial Wolf Count ='</span>,num2str(W0*1000), <span class="string">'elk count='</span>,num2str(E(end)*1000), <span class="string">'coyote count='</span>, num2str(C(end)*1000)]);
+        <span class="keyword">break</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+figure
+plot(W*1000,E*1000);
+title([<span class="string">'Wolves vs. Elk with initial Wolf count of '</span>, num2str(initialWolfCount*1000)]);
+ylabel(<span class="string">'elk'</span>);
+xlabel(<span class="string">'wolves'</span>);
+figure
+plot(t,W*1000);
+title([<span class="string">'Wolves over time with initial wolf count of '</span>, num2str(initialWolfCount*1000)]);
+ylabel(<span class="string">'wolves'</span>);
+xlabel(<span class="string">'time'</span>);
+
+figure
+plot(t,E*1000);
+title([<span class="string">'Elk over time with initial wolf count of '</span>, num2str(initialWolfCount*1000)]);
+ylabel(<span class="string">'elk'</span>);
+xlabel(<span class="string">'time'</span>);
+
+figure
+plot(t,C*1000);
+title([<span class="string">'Coyotes over time with initial wolf count of '</span>, num2str(initialWolfCount*1000)]);
+ylabel(<span class="string">'coyotes'</span>);
+xlabel(<span class="string">'time'</span>);
+
+figure
+hold <span class="string">on</span>
+
+<span class="comment">%Plots using previously defined random numbers with the initial</span>
+<span class="comment">%introduction wolf count.</span>
+<span class="keyword">for</span> i=1:25
+    G0=.8+(rand-.5)*.16;
+    W0=initialWolfCount;
+    C0=2.017+(rand-.5)*.404;
+    E0=31.217+(rand-.5)*3.122;
+    plot([C0]*1000,[E0]*1000,<span class="string">'.r'</span>)
+    xlabel(<span class="string">'coyotes'</span>)
+    ylabel(<span class="string">'elk'</span>)
+    title([<span class="string">'coyotes vs. elk with initial wolf count of '</span>, num2str(initialWolfCount*1000)])
+    [t,x,y]=sim(<span class="string">'jellystone_v6'</span>);
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    plot(C*1000,E*1000);
+<span class="keyword">end</span>
+
+<span class="comment">%Executes the model over 100 years.</span>
+<span class="keyword">for</span> i=1:1
+    G0=.8;
+    W0=initialWolfCount;
+    C0=2.017;
+    E0=31.217;
+
+    set_param(<span class="string">'jellystone_v6'</span>, <span class="string">'StopTime'</span>, <span class="string">'100'</span>)
+    [t,x,y]=sim(<span class="string">'jellystone_v6'</span>);
+        E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+<span class="keyword">end</span>
+figure
+plot(W*1000,E*1000);
+title([<span class="string">'Wolves vs. Elk with initial Wolf count of '</span>, num2str(initialWolfCount*1000), <span class="string">' over a century'</span>]);
+ylabel(<span class="string">'elk'</span>);
+xlabel(<span class="string">'wolves'</span>);
+figure
+plot(t,W*1000);
+title([<span class="string">'Wolves over time with initial wolf count of '</span>, num2str(initialWolfCount*1000), <span class="string">' over a century'</span>]);
+ylabel(<span class="string">'wolves'</span>);
+xlabel(<span class="string">'time'</span>);
+
+figure
+plot(t,E*1000);
+title([<span class="string">'Elk over time with initial wolf count of '</span>, num2str(initialWolfCount*1000), <span class="string">' over a century'</span>]);
+ylabel(<span class="string">'elk'</span>);
+xlabel(<span class="string">'time'</span>);
+
+figure
+plot(t,C*1000);
+title([<span class="string">'Coyotes over time with initial wolf count of '</span>, num2str(initialWolfCount*1000), <span class="string">' over a century'</span>]);
+ylabel(<span class="string">'coyotes'</span>);
+xlabel(<span class="string">'time'</span>);
+
+<span class="comment">%Executes the model over 1,000 years.  The coyotes go extinct :(</span>
+<span class="comment">% Perhaps we should try to demonstrate that coyotes will go extinct anyway?</span>
+<span class="comment">% or maybe they won't.</span>
+<span class="keyword">for</span> i=1:1
+    G0=.8;
+    W0=initialWolfCount;
+    C0=2.017;
+    E0=31.217;
+    set_param(<span class="string">'jellystone_v6'</span>, <span class="string">'StopTime'</span>, <span class="string">'1000'</span>)
+    [t,x,y]=sim(<span class="string">'jellystone_v6'</span>);
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    <span class="keyword">for</span> j=1:size(C)
+        <span class="keyword">if</span>(C(j) &lt; .001)
+            disp([<span class="string">'After adding wolves, coytoes go extinct in year '</span>, num2str(2016+j)]);
+            <span class="keyword">break</span>;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+figure
+plot(W*1000,E*1000);
+title([<span class="string">'Wolves vs. Elk with initial Wolf count of '</span>, num2str(initialWolfCount*1000), <span class="string">' over a millenium'</span>]);
+ylabel(<span class="string">'elk'</span>);
+xlabel(<span class="string">'wolves'</span>);
+figure
+plot(t,W*1000);
+title([<span class="string">'Wolves over time with initial wolf count of '</span>, num2str(initialWolfCount*1000), <span class="string">' over a millenium'</span>]);
+ylabel(<span class="string">'wolves'</span>);
+xlabel(<span class="string">'time'</span>);
+
+figure
+plot(t,E*1000);
+title([<span class="string">'Elk over time with initial wolf count of '</span>, num2str(initialWolfCount*1000), <span class="string">' over a millenium'</span>]);
+ylabel(<span class="string">'elk'</span>);
+xlabel(<span class="string">'time'</span>);
+
+figure
+plot(t,C*1000);
+title([<span class="string">'Coyotes over time with initial wolf count of '</span>, num2str(initialWolfCount*1000), <span class="string">' over a millenium'</span>]);
+ylabel(<span class="string">'coyotes'</span>);
+xlabel(<span class="string">'time'</span>);
+
+figure;
+hold <span class="string">on</span>;
+
+<span class="comment">%Shows whether or not coyotes go extinct if we don't introduce any wolves.</span>
+<span class="keyword">for</span> i=1:25
+    G0=.8+(rand-.5)*.16;
+    W0=0;
+    C0=2.017+(rand-.5)*.404;
+    E0=31.217+(rand-.5)*6.244;
+    xlabel(<span class="string">'time'</span>)
+    ylabel(<span class="string">'coyotes'</span>)
+    title(<span class="string">'coyotes vs. time (no wolves) over a millenium'</span>)
+    [t,x,y]=sim(<span class="string">'jellystone_v6'</span>);
+    C=x(:,2);
+    plot(t,C*1000);
+    <span class="keyword">for</span> j=1:size(C)
+        <span class="keyword">if</span>(C(j) &lt; .001)
+            averageExtinctionYear(i) = j+2016;
+            <span class="keyword">break</span>;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+disp([<span class="string">'Without wolves, coyotes will go extinct around the year '</span>, num2str(mean(averageExtinctionYear))]);
+<span class="comment">%Do we buy anything by introducing less wolves?</span>
+<span class="keyword">for</span> i=1:1
+    G0=.8;
+    W0=.001;
+    C0=2.017;
+    E0=31.217;
+    set_param(<span class="string">'jellystone_v6'</span>, <span class="string">'StopTime'</span>, <span class="string">'1000'</span>)
+    [t,x,y]=sim(<span class="string">'jellystone_v6'</span>);
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    <span class="keyword">for</span> j=1:size(C)
+        <span class="keyword">if</span>(C(j) &lt; .001)
+            disp([<span class="string">'After adding only 1 wolf, coytoes go extinct in year '</span>, num2str(2016+j)]);
+            <span class="keyword">break</span>;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">Coyote percentage:0.51861Elk percentage:1.2962
+Coyote percentage:0.51752Elk percentage:1.2942
+Coyote percentage:0.51721Elk percentage:1.275
+Coyote percentage:0.51611Elk percentage:1.2704
+Coyote percentage:0.51448Elk percentage:1.2618
+Coyote percentage:0.51313Elk percentage:1.2676
+Coyote percentage:0.51294Elk percentage:1.2475
+Coyote percentage:0.51131Elk percentage:1.2225
+Coyote percentage:0.50811Elk percentage:1.1859
+Coyote percentage:0.50531Elk percentage:1.1423
+Coyote percentage:0.5038Elk percentage:1.108
+Coyote percentage:0.49882Elk percentage:1.0651
+Coyote percentage:0.49636Elk percentage:1.0294
+Coyote percentage:0.49091Elk percentage:0.99421
+Initial Wolf Count =14elk count=31036.3689coyote count=990.1734
+After adding wolves, coytoes go extinct in year 2240
+Without wolves, coyotes will go extinct around the year 2401.64
+After adding only 1 wolf, coytoes go extinct in year 2245
+</pre><img vspace="5" hspace="5" src="executeModel_01.png" alt=""> <img vspace="5" hspace="5" src="executeModel_02.png" alt=""> <img vspace="5" hspace="5" src="executeModel_03.png" alt=""> <img vspace="5" hspace="5" src="executeModel_04.png" alt=""> <img vspace="5" hspace="5" src="executeModel_05.png" alt=""> <img vspace="5" hspace="5" src="executeModel_06.png" alt=""> <img vspace="5" hspace="5" src="executeModel_07.png" alt=""> <img vspace="5" hspace="5" src="executeModel_08.png" alt=""> <img vspace="5" hspace="5" src="executeModel_09.png" alt=""> <img vspace="5" hspace="5" src="executeModel_10.png" alt=""> <img vspace="5" hspace="5" src="executeModel_11.png" alt=""> <img vspace="5" hspace="5" src="executeModel_12.png" alt=""> <img vspace="5" hspace="5" src="executeModel_13.png" alt=""> <img vspace="5" hspace="5" src="executeModel_14.png" alt=""> <img vspace="5" hspace="5" src="executeModel_15.png" alt=""> <img vspace="5" hspace="5" src="executeModel_16.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2016b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% executeModel.m
+% Written by Tom Kennedy and Matthew Ellis
+% Executes the Jellystone_v6 model.
+
+close all
+acreage=19.68; % *1000
+graze = .492;
+
+figure
+hold on
+set_param('jellystone_v6', 'StopTime', '30')
+
+initialWolfCount = 0;
+
+%Shows Executes the simulation over 30 years without wolves, shows that
+%the elk population is continuing to approach 40,000.  Uses random numbers 
+% for G0 (grazing ground, which should be able to go from .72 to .88, for 
+%C0 it can be 1,815 to 2,219, for E0 it can go from 25,873 to 37,461.
+for i=1:25
+    G0=.8+(rand-.5)*.16;
+    W0=0;
+    C0=2.017+(rand-.5)*.404;
+    E0=31.217+(rand-.5)*6.244;
+    plot([C0]*1000,[E0]*1000,'.r')
+    xlabel('coyotes')
+    ylabel('elk')
+    title('coyotes vs. elk (no wolves)')
+    [t,x,y]=sim('jellystone_v6');
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    plot(C*1000,E*1000);
+end
+
+figure
+hold on
+%Determines what the number of wolves would be that we would need to
+%introduce into the model for the elk population to decrease over 30 years.
+
+for i=1:25
+    G0=.8;
+    W0=i/1000;
+    C0=2.017;
+    E0=31.217;
+    plot([C0]*1000,[E0]*1000,'.r')
+    xlabel('coyotes')
+    ylabel('elk')
+    title('coyotes vs. elk (with wolves)')
+    [t,x,y]=sim('jellystone_v6');
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    plot(C*1000,E*1000);
+    disp(['Coyote percentage:',num2str(C(end)/C0),'Elk percentage:',num2str(E(end)/E0)]);
+    if(E(end)<E0)
+        initialWolfCount = W0;
+        disp(['Initial Wolf Count =',num2str(W0*1000), 'elk count=',num2str(E(end)*1000), 'coyote count=', num2str(C(end)*1000)]);
+        break
+    end
+end
+figure
+plot(W*1000,E*1000);
+title(['Wolves vs. Elk with initial Wolf count of ', num2str(initialWolfCount*1000)]);
+ylabel('elk');
+xlabel('wolves');
+figure
+plot(t,W*1000);
+title(['Wolves over time with initial wolf count of ', num2str(initialWolfCount*1000)]);
+ylabel('wolves');
+xlabel('time');
+
+figure
+plot(t,E*1000);
+title(['Elk over time with initial wolf count of ', num2str(initialWolfCount*1000)]);
+ylabel('elk');
+xlabel('time');
+
+figure
+plot(t,C*1000);
+title(['Coyotes over time with initial wolf count of ', num2str(initialWolfCount*1000)]);
+ylabel('coyotes');
+xlabel('time');
+
+figure
+hold on
+
+%Plots using previously defined random numbers with the initial
+%introduction wolf count.
+for i=1:25
+    G0=.8+(rand-.5)*.16;
+    W0=initialWolfCount;
+    C0=2.017+(rand-.5)*.404;
+    E0=31.217+(rand-.5)*3.122;
+    plot([C0]*1000,[E0]*1000,'.r')
+    xlabel('coyotes')
+    ylabel('elk')
+    title(['coyotes vs. elk with initial wolf count of ', num2str(initialWolfCount*1000)])
+    [t,x,y]=sim('jellystone_v6');
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    plot(C*1000,E*1000);
+end
+
+%Executes the model over 100 years.
+for i=1:1
+    G0=.8;
+    W0=initialWolfCount;
+    C0=2.017;
+    E0=31.217;
+
+    set_param('jellystone_v6', 'StopTime', '100')
+    [t,x,y]=sim('jellystone_v6');   
+        E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+end
+figure
+plot(W*1000,E*1000);
+title(['Wolves vs. Elk with initial Wolf count of ', num2str(initialWolfCount*1000), ' over a century']);
+ylabel('elk');
+xlabel('wolves');
+figure
+plot(t,W*1000);
+title(['Wolves over time with initial wolf count of ', num2str(initialWolfCount*1000), ' over a century']);
+ylabel('wolves');
+xlabel('time');
+
+figure
+plot(t,E*1000);
+title(['Elk over time with initial wolf count of ', num2str(initialWolfCount*1000), ' over a century']);
+ylabel('elk');
+xlabel('time');
+
+figure
+plot(t,C*1000);
+title(['Coyotes over time with initial wolf count of ', num2str(initialWolfCount*1000), ' over a century']);
+ylabel('coyotes');
+xlabel('time');
+
+%Executes the model over 1,000 years.  The coyotes go extinct :(
+% Perhaps we should try to demonstrate that coyotes will go extinct anyway?
+% or maybe they won't.
+for i=1:1
+    G0=.8;
+    W0=initialWolfCount;
+    C0=2.017;
+    E0=31.217;
+    set_param('jellystone_v6', 'StopTime', '1000')
+    [t,x,y]=sim('jellystone_v6');   
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    for j=1:size(C)
+        if(C(j) < .001)
+            disp(['After adding wolves, coytoes go extinct in year ', num2str(2016+j)]);
+            break;
+        end
+    end
+end
+figure
+plot(W*1000,E*1000);
+title(['Wolves vs. Elk with initial Wolf count of ', num2str(initialWolfCount*1000), ' over a millenium']);
+ylabel('elk');
+xlabel('wolves');
+figure
+plot(t,W*1000);
+title(['Wolves over time with initial wolf count of ', num2str(initialWolfCount*1000), ' over a millenium']);
+ylabel('wolves');
+xlabel('time');
+
+figure
+plot(t,E*1000);
+title(['Elk over time with initial wolf count of ', num2str(initialWolfCount*1000), ' over a millenium']);
+ylabel('elk');
+xlabel('time');
+
+figure
+plot(t,C*1000);
+title(['Coyotes over time with initial wolf count of ', num2str(initialWolfCount*1000), ' over a millenium']);
+ylabel('coyotes');
+xlabel('time');
+
+figure;
+hold on;
+
+%Shows whether or not coyotes go extinct if we don't introduce any wolves.
+for i=1:25
+    G0=.8+(rand-.5)*.16;
+    W0=0;
+    C0=2.017+(rand-.5)*.404;
+    E0=31.217+(rand-.5)*6.244;
+    xlabel('time')
+    ylabel('coyotes')
+    title('coyotes vs. time (no wolves) over a millenium')
+    [t,x,y]=sim('jellystone_v6');
+    C=x(:,2);
+    plot(t,C*1000);
+    for j=1:size(C)
+        if(C(j) < .001)
+            averageExtinctionYear(i) = j+2016;
+            break;
+        end
+    end
+end
+disp(['Without wolves, coyotes will go extinct around the year ', num2str(mean(averageExtinctionYear))]);
+%Do we buy anything by introducing less wolves?
+for i=1:1
+    G0=.8;
+    W0=.001;
+    C0=2.017;
+    E0=31.217;
+    set_param('jellystone_v6', 'StopTime', '1000')
+    [t,x,y]=sim('jellystone_v6');   
+    E=x(:,1);
+    C=x(:,2);
+    W=x(:,3);
+    for j=1:size(C)
+        if(C(j) < .001)
+            disp(['After adding only 1 wolf, coytoes go extinct in year ', num2str(2016+j)]);
+            break;
+        end
+    end
+end
+##### SOURCE END #####
+--></body></html>
